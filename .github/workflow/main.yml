@@ -3,7 +3,7 @@ name: 'test my project'
 on: [push] # список событий, на которые запускается действие
 jobs: # список работ, которые будут производиться (каждая работа будет выводиться отдельно)
  checks: # имя работы сhecks
- runs-on: Windows-latest # на какой машине делать работы (можно задать матрицы машин, допустимы Windows и Mac OS)
+ runs-on: ubuntu-latest # на какой машине делать работы (можно задать матрицы машин, допустимы Windows и Mac OS)
  steps: # выполняемые последовательно шаги
  - uses: actions/checkout@v3
  - run: echo "hello world"
