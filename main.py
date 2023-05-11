@@ -1,9 +1,12 @@
-print("Hello world")
-from flask import Flask
-app = Flask(__name__)
-#декоратор для вывода страницы по умолчанию
-@app.route("/")
-def hello():
- return " <html><head></head> <body> Hello World! </body></html>"
+import uvicorn
+from fastapi import FastAPI
+
+app = FastAPI()
+def sum_two_args(x,y):
+ return x+y
+# Hello World route
+@app.get("/")
+def read_root():
+ return {"Hello": "World"}
 if __name__ == "__main__":
- app.run(host='127.0.0.1',port=5000)
+ uvicorn.run(app, host="127.0.0.1", port=5000)
