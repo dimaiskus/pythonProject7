@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request
-import cv2
+from flask import Flask, render_template, request, redirect, url_for
 import numpy as np
 import matplotlib.pyplot as plt
+import cv2
 
 app = Flask(__name__)
 
@@ -9,45 +9,69 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/process', methods=['POST'])
-def process():
-    # Получаем файл изображения из формы
-    img = request.files['image'].read()
-    # Преобразуем байты в массив numpy
-    npimg = np.fromstring(img, np.uint8)
-    # Декодируем изображение
-    img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
-    # Получаем порядок цветовых карт из формы
+@app.route('/upload', methods=['POST'])
+def upload():
+    # получаем файл из запроса
+    file = request.files['image']
+    # читаем изображение с помощью OpenCV
+    img = cv2.imdecode(np.fromstring(file.read(), np.uint8), cv2.IMREAD_COLOR)
+
+    # получаем порядок каналов из запроса
     order = request.form['order']
-    # Меняем порядок цветовых карт
     if order == 'rgb':
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        pass
+    elif order == 'rbg':
+        img[:, :, 1], img[:, :, 2] = img[:, :, 2], img[:, :, 1].copy()
+    elif order == 'grb':
+        img[:, :, 0], img[:, :, 1] = img[:, :, 1], img[:, :, 0].copy()
     elif order == 'gbr':
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        img[:, :, 0], img[:, :, 1], img[:, :, 2] = img[:, :, 1], img[:, :, 2], img[:, :, 0].copy()
     elif order == 'brg':
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    # Вычисляем гистограммы распределения цветов
-    colors = ('r', 'g', 'b')
-    for i, col in enumerate(colors):
+        img[:, :, 0], img[:, :, 2] = img[:, :, 2], img[:, :, 0].copy()
+    elif order == 'bgr':
+        img[:, :, 0], img[:, :, 1], img[:, :, 2] = img[:, :, 2], img[:, :, 1], img[:, :, 0].copy()
+
+
+    # получаем графики распределения цветов
+    color = ('b', 'g', 'r')
+    for i, col in enumerate(color):
         histr = cv2.calcHist([img], [i], None, [256], [0, 256])
         plt.plot(histr, color=col)
         plt.xlim([0, 256])
-    plt.savefig('static/histogram.png')
+    histogram_filename = 'histogram.png'
+    plt.savefig(f'static/{histogram_filename}')
     plt.clf()
-    # Вычисляем среднее значение цвета по вертикали и горизонтали
-    mean_horizontal = np.mean(img, axis=0)
-    mean_vertical = np.mean(img, axis=1)
-    plt.plot(mean_horizontal)
-    plt.savefig('static/mean_horizontal.png')
-    plt.clf()
+
+    # получаем графики среднего значения цвета по вертикали и горизонтали
+    mean_vertical = np.mean(img, axis=0)
     plt.plot(mean_vertical)
-    plt.savefig('static/mean_vertical.png')
+    mean_vertical_filename = 'mean_vertical.png'
+    plt.savefig(f'static/{mean_vertical_filename}')
     plt.clf()
-    # Возвращаем результаты
-    return render_template('result.html')
+
+    mean_horizontal = np.mean(img, axis=1)
+    plt.plot(mean_horizontal)
+    mean_horizontal_filename = 'mean_horizontal.png'
+    plt.savefig(f'static/{mean_horizontal_filename}')
+    plt.clf()
+
+    # сохраняем измененное изображение
+    modified_filename = 'modified.png'
+    cv2.imwrite(f'static/{modified_filename}', img)
+
+    # перенаправляем на страницу с результатами и передаем параметры графиков в URL
+    return redirect(url_for('results', hist=histogram_filename, vert=mean_vertical_filename, hor=mean_horizontal_filename, mod=modified_filename))
+
+@app.route('/results')
+def results():
+    # получаем параметры графиков из URL
+    hist_filename = request.args.get('hist')
+    vert_filename = request.args.get('vert')
+    hor_filename = request.args.get('hor')
+    mod_filename = request.args.get('mod')
+    # отображаем графики на странице
+    return render_template('result.html', hist=hist_filename, vert=vert_filename, hor=hor_filename, mod=mod_filename)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
