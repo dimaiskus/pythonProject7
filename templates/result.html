@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Image Processing Results</title>
+</head>
+<body>
+    <h1>Color Image Processing Results</h1>
+    <h2>Original Image</h2>
+    <img src="{{ url_for('static', filename='original.png') }}"><br>
+    <h2>Processed Image</h2>
+    <img src="{{ url_for('static', filename='processed.png') }}"><br>
+    <h2>Color Histogram</h2>
+    <img src="{{ url_for('static', filename='histogram.png') }}"><br>
+    <h2>Mean Color (Horizontal)</h2>
+    <img src="{{ url_for('static', filename='mean_horizontal.png') }}"><br>
+    <h2>Mean Color (Vertical)</h2>
+    <img src="{{ url_for('static', filename='mean_vertical.png') }}"><br>
+    <a href="/">Back to Home</a>
+</body>
+</html>

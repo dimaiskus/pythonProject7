@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Image Processing</title>
+</head>
+<body>
+    <h1>Color Image Processing</h1>
+    <form action="/process" method="post" enctype="multipart/form-data">
+        <label for="image">Select an image:</label>
+        <input type="file" name="image" id="image"><br>
+        <label for="order">Select a color order:</label>
+        <select name="order" id="order">
+            <option value="rgb">RGB</option>
+            <option value="gbr">GBR</option>
+            <option value="brg">BRG</option>
+        </select><br>
+        <input type="submit" value="Process">
+    </form>
+</body>
+</html>
