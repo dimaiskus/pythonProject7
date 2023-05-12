@@ -2,18 +2,22 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Image Results</title>
+    <title>Result</title>
   </head>
   <body>
-    <h1>Image Results</h1>
-    <img src="{{ url_for('static', filename=modified_filename) }}" alt="Modified Image">
-    <br><br>
-    <img src="{{ url_for('static', filename=histogram_filename) }}" alt="Histogram">
-    <br><br>
-    <img src="{{ url_for('static', filename=mean_vertical_filename) }}" alt="Vertical Mean">
-    <br><br>
-    <img src="{{ url_for('static', filename=mean_horizontal_filename) }}" alt="Horizontal Mean">
+    <h1>Result</h1>
+    <h2>Original Image</h2>
+    <img src="{{ url_for('static', filename='original.png') }}">
+    <h2>Modified Image</h2>
+    <img src="{{ url_for('static', filename='modified.png') }}">
+    <h2>Color Histogram</h2>
+    <img src="{{ url_for('static', filename='histogram.png') }}">
+    <h2>Vertical Mean</h2>
+    <img src="{{ url_for('static', filename='mean_vertical.png') }}">
+    <h2>Horizontal Mean</h2>
+    <img src="{{ url_for('static', filename='mean_horizontal.png') }}">
   </body>
 </html>
+
 
 

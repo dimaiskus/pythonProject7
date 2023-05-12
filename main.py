@@ -15,7 +15,8 @@ def upload():
     file = request.files['image']
     # читаем изображение с помощью OpenCV
     img = cv2.imdecode(np.fromstring(file.read(), np.uint8), cv2.IMREAD_COLOR)
-
+    original_filename = 'original.png'
+    cv2.imwrite(f'static/{original_filename}', img)
     # получаем порядок каналов из запроса
     order = request.form['order']
     if order == 'rgb':

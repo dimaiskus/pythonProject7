@@ -1,5 +1,3 @@
 flask
 numpy
-OpenCV
-cv2
 matplotlib
